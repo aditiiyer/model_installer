@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "model_installer"
+version = "0.1.0"
+description = "Shell-based AI model installer compatible with pyCERR"
+
+dependencies = ["uv", ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+model_installer = ["installer.sh"]
