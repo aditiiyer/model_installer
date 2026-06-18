@@ -261,8 +261,8 @@ fi
 
 CONDAPACK_HASH=`cat model.txt | grep CONDAPACK | awk '{ print $2 }'`
 
-echo wget -O model_weights.tar.gz -L ${MODEL_WEIGHTS}
-wget -O model_weights.tar.gz -L ${MODEL_WEIGHTS}
+echo curl -L -o model_weights.tar.gz ${MODEL_WEIGHTS}
+curl -L -o model_weights.tar.gz ${MODEL_WEIGHTS}
 echo tar xf model_weights.tar.gz
 tar xf model_weights.tar.gz
 rm model_weights.tar.gz
@@ -273,8 +273,8 @@ then
         mkdir ${MODEL_FOLDER}/conda-pack
         cd ${MODEL_FOLDER}/conda-pack
         CONDAPACK=`base64 -d <<<${CONDAPACK_HASH} | gunzip`
-        echo wget -O condapack.tar.gz -L ${CONDAPACK}
-        wget -O condapack.tar.gz -L ${CONDAPACK}
+        echo curl -L -o condapack.tar.gz ${CONDAPACK}
+        curl -L -o condapack.tar.gz ${CONDAPACK}
         echo tar xf condapack.tar.gz
         tar xf condapack.tar.gz
         rm condapack.tar.gz
