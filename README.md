@@ -40,4 +40,6 @@ The following are the list of available models. When passing the argument to ins
           	7.  CT_HN_SMIT
           	8.  CT_HeartSubstruct_SMIT
           	9.  CT_WHOLEBODY_SMITplus
-```
+          	10.  MR_Rectum_GTV_SMIT
+          	11.  MR_HN_Nodule_SMIT
+          	12.  CT_Lung_OAR_SMITplus
