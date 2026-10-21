@@ -47,10 +47,11 @@ function define_models {
           11)
                 MODEL_NAME=MR_HN_Nodule_SMIT
                 ;;
+
           12)
                 MODEL_NAME=CT_Lung_OAR_SMITplus
                 ;;
-          13)
+	  13)
                 MODEL_NAME=MR_BrainMets_SMITplus
                 ;;
            *)
@@ -59,6 +60,18 @@ function define_models {
         esac
 
         echo $MODEL_NAME #${MODEL_GIT} ${MODEL_WEIGHTS} ${CONDAPACK}
+}
+
+function define_repo {
+	# Name of repository hosting each models. SMIT models share a common repo.
+	case $1 in
+CT_HN_SMIT|CT_Lung_SMIT|MR_Rectum_GTV_SMIT|CT_HeartSubstruct_SMIT
+	echo SMIT
+	;;
+	*)
+	echo $1
+	;;
+	esac
 }
 
 function print_model_opts {
@@ -77,10 +90,10 @@ function help_text {
         echo "          -i : Flag to run installer in interactive mode (no argument)"
         echo "          -m : [1-${N_MODELS}] Integer number to select model to install. For list of available options, see below. "
         echo "          -d : Directory to install model with network weights "
-        echo "          -p : [P/C/N] Setup and install Python environment P: setup Conda env from python requirements.txt; C: Conda pack download; N: No install. " #User must already have Anaconda installed and initiated. "
+        echo "          -p : [P/C/N/U] Setup and install Python environment P: setup Conda env from python requirements.txt; C: Conda pack download; U: Setup uv env from Python requirements.txt; N: No install. " #User must already have Anaconda installed and initiated. "
         echo "          -n : [1-${N_MODELS}] Print the model name of number argument "		
-	    echo "          -r : Provide URL to tar archive for model weights (optional) "
-		echo "          -u : User credentials for private GitHub repo, format is user:token "
+	echo "          -r : Provide URL to tar archive for model weights (optional) "
+        echo "          -u : User credentials for private GitHub repo, format is user:token "
         echo "          -h : Print help menu "
         echo " "
         print_model_opts $N_MODELS
@@ -175,6 +188,7 @@ then
 
         MODEL_STRING=`define_models ${MODEL_NUM}`
         MODEL_NAME=`echo ${MODEL_STRING}` #| awk '{ print $1 }'`
+	REPO_NAME=`define_repo ${MODEL_NAME}`
         #MODEL_GIT_HASH=`echo ${MODEL_STRING} | awk '{ print $2 }'`
         #MODEL_WEIGHTS_HASH=`echo ${MODEL_STRING} | awk '{ print $3 }'`
         #CONDAPACK_HASH=`echo ${MODEL_STRING} | awk '{ print $4 }'`
@@ -242,9 +256,9 @@ cd ${INSTALLDIR}
 
 if [ -z "$TOK" ]
 then
-        MODEL_GIT="https://github.com/cerr/${MODEL_NAME}.git"
+        MODEL_GIT="https://github.com/cerr/${REPO_NAME}.git"
 else
-        MODEL_GIT="https://${TOK}@github.com/cerr/${MODEL_NAME}.git"
+        MODEL_GIT="https://${TOK}@github.com/cerr/${REPO_NAME}.git"
 fi
 
 echo git clone ${MODEL_GIT}
@@ -252,17 +266,17 @@ git clone ${MODEL_GIT}
 
 
 
-MODEL_FOLDER=${INSTALLDIR}/${MODEL_NAME}
+MODEL_FOLDER=${INSTALLDIR}/${REPO_NAME}
 cd ${MODEL_FOLDER}
 
 if [ -z "${MODEL_WEIGHTS}" ]
 then
-	MODEL_WEIGHTS_HASH=`cat model.txt | grep MODEL_WEIGHTS | awk '{ print $2 }'`
+	MODEL_WEIGHTS_HASH=`cat weights/${MODEL_NAME}.txt | grep MODEL_WEIGHTS | awk '{ print $2 }'`
 	MODEL_WEIGHTS=`base64 -d <<<${MODEL_WEIGHTS_HASH} | gunzip`
 fi
 
 
-CONDAPACK_HASH=`cat model.txt | grep CONDAPACK | awk '{ print $2 }'`
+CONDAPACK_HASH=`cat weights/${MODEL_NAME}.txt | grep CONDAPACK | awk '{ print $2 }'`
 
 echo curl -L -o model_weights.tar.gz ${MODEL_WEIGHTS}
 curl -L -o model_weights.tar.gz ${MODEL_WEIGHTS}
@@ -293,7 +307,7 @@ then
         fi
         conda deactivate
         conda env create -f ${MODEL_FOLDER}/environment.yml
-        MODEL_NAME=`cat ${MODEL_FOLDER}/environment.yml | head -1 | awk '{ print $2 }'`        #conda activate ${MODEL_NAME}
+        ENV_NAME=`cat ${MODEL_FOLDER}/environment.yml | head -1 | awk '{ print $2 }'`        #conda activate ${MODEL_NAME}
 elif [ "${POPTION}" == "U" ]
 then
         echo "uv environment install option specified"

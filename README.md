@@ -55,17 +55,20 @@ Model repositories must be structured as follows for installation and deployment
 ```text
 {ModelName}/  
 ├── {inference_script}.py        # Required for use with pyCERR. Must be placed at root.  
-├── run_spec.yaml                # Required for use with pyCERR  
-├── model.txt                    # Required  
 ├── uv_config.txt                # Optional  
 ├── requirements/
-│   └── req1.txt                 # Required for use with pyCERR 
+│   └── req1.txt                 # Required for use with pyCERR
+├── weights/
+│   └── {model_name}.txt	 # Required (one per model) 
 └── {library_subdir}/              
     ├── __init__.py              # Required  
-    └── *.py  
+    └── *.py 
+
+YAML specification files distributed with pyCERR contain the information (pre and post-processing, inference entrypoint, input parameters, output labels) needed to run the model via pyCERR. 
 ```
+
   
-* ### model.txt
+* ### {model_name}.txt
 
 Contains the URL to model weights, base64+gzipped.
 ```
@@ -87,7 +90,7 @@ Contains the Python version and any extra install flags for building the *uv* vi
 Standard pip requirements files. All .txt files in `requirements/` are installed automatically. 
 
 
-* ### run_spec.yaml
+* ### YAML run specs
 
 Defines how the model is run and what outputs it produces.
 
