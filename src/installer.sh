@@ -65,7 +65,7 @@ function define_models {
 function define_repo {
 	# Name of repository hosting each models. SMIT models share a common repo.
 	case $1 in
-CT_HN_SMIT|CT_Lung_SMIT|MR_Rectum_GTV_SMIT|CT_HeartSubstruct_SMIT
+		CT_HN_SMIT|CT_Lung_SMIT|MR_Rectum_GTV_SMIT|CT_HeartSubstruct_SMIT|MR_BrainMets_SMITplus)
 	echo SMIT
 	;;
 	*)
@@ -188,7 +188,6 @@ then
 
         MODEL_STRING=`define_models ${MODEL_NUM}`
         MODEL_NAME=`echo ${MODEL_STRING}` #| awk '{ print $1 }'`
-	REPO_NAME=`define_repo ${MODEL_NAME}`
         #MODEL_GIT_HASH=`echo ${MODEL_STRING} | awk '{ print $2 }'`
         #MODEL_WEIGHTS_HASH=`echo ${MODEL_STRING} | awk '{ print $3 }'`
         #CONDAPACK_HASH=`echo ${MODEL_STRING} | awk '{ print $4 }'`
@@ -244,6 +243,8 @@ then
 else
     MODEL_NAME=`define_models ${MODEL_NUM}`
 fi
+
+REPO_NAME=`define_repo ${MODEL_NAME}`
 
 # Verify all selected options
 
